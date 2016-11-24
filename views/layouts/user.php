@@ -33,7 +33,6 @@ $this->title = Yii::$app->params['name'] . ' | ' . Yii::t('base', 'Панель 
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Profile</a></li>
                 <li><a href="#">Help</a></li>
                 <li><a href="<?= Url::to(['/logout']); ?>" data-method="post"><?= Yii::t('base', 'Выход') . '&nbsp;' . '(' . Yii::$app->user->identity->login . ')'; ?></a></li>
             </ul>

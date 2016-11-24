@@ -193,3 +193,8 @@ div.required label.control-label:after {
     content: " *";
     color: red;
 }
+
+.nav > li.active > a:hover {
+  text-decoration: none;
+  background-color: #428bca;
+}

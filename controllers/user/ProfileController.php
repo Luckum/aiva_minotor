@@ -13,8 +13,28 @@ class ProfileController extends UserController
 {
     public function actionIndex()
     {
+        $model = $this->findModel(Yii::$app->user->identity->id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('kv-detail-success', Yii::t('base', 'Изменения сохранены'));
+        }
         return $this->render('index', [
-            'model' => $this->findModel(Yii::$app->user->identity->id),
+            'model' => $model,
+        ]);
+    }
+    
+    public function actionChangepass()
+    {
+        $model = $this->findModel(Yii::$app->user->identity->id);
+        $model->scenario = 'changePass';
+        
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', Yii::t('base', 'Пароль изменен'));
+            return $this->redirect(['index']);
+        }
+        
+        $model->password = '';
+        return $this->render('changepass', [
+            'model' => $model,
         ]);
     }
     

@@ -46,10 +46,13 @@ use kartik\detail\DetailView;
         ],
         'attributes' => [
             'login',
+            'email',
             'name',
         ]
     ]);
     ?>
+    
+    <?= Html::a(Yii::t('base', 'Сменить пароль'), ['user/profile/changepass'], ['class' => 'btn btn-primary']) ?>
     
 
 </div>

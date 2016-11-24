@@ -31,6 +31,9 @@ class User extends BaseModel implements IdentityInterface
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
     
+    public $new_password;
+    public $new_password_2;
+    
     /**
      * @inheritdoc
      */
@@ -70,6 +73,8 @@ class User extends BaseModel implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_INACTIVE, self::STATUS_ACTIVE, self::STATUS_SUSPENDED]],
             ['verify_code', 'safe', 'except' => ['admin_create', 'admin_update']],
+            [['new_password', 'new_password_2'], 'required', 'on' => ['changePass']],
+            ['new_password_2', 'compare', 'compareAttribute' => 'new_password', 'on' => ['changePass']],
         ];
     }
 
@@ -84,6 +89,8 @@ class User extends BaseModel implements IdentityInterface
             'group_id' => Yii::t('base', 'Группа'),
             'status' => Yii::t('base', 'Статус'),
             'password' => Yii::t('base', 'Пароль'),
+            'new_password' => Yii::t('base', 'Новый пароль'),
+            'new_password_2' => Yii::t('base', 'Подтверждение нового пароля'),
         ];
     }
     
@@ -193,6 +200,12 @@ class User extends BaseModel implements IdentityInterface
     {
         $this->password = Yii::$app->security->generatePasswordHash($password);
     }
+    
+    public function getPassword()
+    {
+        $user = $this->findOne($this->id);
+        return $user->password;
+    }
 
     /**
      * Generates "remember me" authentication key
@@ -250,6 +263,12 @@ class User extends BaseModel implements IdentityInterface
     
     public function beforeValidate()
     {
+        if ($this->scenario == 'changePass') {
+            if (Yii::$app->security->validatePassword($this->password, $this->getPassword())) {
+                $this->setPassword($this->new_password);
+            }
+        }
+        
         if ($this->isNewRecord) {
             $this->setPassword($this->password);
             $this->generateAuthKey();
